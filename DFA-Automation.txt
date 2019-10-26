@@ -1,8 +1,8 @@
-3 
-1 
-2 
-2 3 
-6 
+states 3 
+initial 1 
+final 2 
+final_states 2 3 
+transitions 6 
 1 a 2 
 1 b 1 
 2 a 3 
