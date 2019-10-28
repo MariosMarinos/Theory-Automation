@@ -15,24 +15,29 @@ class DFA:
         return;
 
     def transition_to_state_with_input(self, input_value):
+        # if DFA detect a letter that is not supposed to be in our alphabet,
+        # it will set the current state to None. Otherwise if current state and
+        # input value are in the dictionary move to the next state.
         if ((self.current_state, input_value) not in self.transition_function.keys()):
             self.current_state = None;
             return;
         self.current_state = self.transition_function[(self.current_state, input_value)];
         return;
 
+
     def in_accept_state(self):
+        # if current_state(last letter) is in accpet states then return True otherwise false.
         return self.current_state in accept_states;
 
     def go_to_initial_state(self):
+        # set the initial state.
         self.current_state = self.start_state;
         return;
 
     def run_with_input_list(self, input_list):
         self.go_to_initial_state();
-        for inp in input_list:
+        for inp in input_list: # for each letter go to the next state.
             self.transition_to_state_with_input(inp);
-            continue;
         return self.in_accept_state();
     pass;
 
@@ -66,5 +71,5 @@ if __name__ == "__main__":
     fname = sys.argv[1] # waiting for the user to give the name.
     states, initial,accept_states,transitions = readFile(fname)
     d = DFA(states,transitions,initial,accept_states)
-    inp_program = list('abbbbbbaaaaa');
+    inp_program = list('abbbbbbaaaa');
     print (d.run_with_input_list(inp_program));
