@@ -5,6 +5,63 @@
 import sys
 from collections import defaultdict
 
+class NFAe:
+    current_state = None;
+    def __init__(self, states, transition_function, start_state, accept_states):
+        self.states = states;
+        self.transition_function = transition_function;
+        self.start_state = start_state;
+        self.accept_states = accept_states;
+        self.current_state = start_state;
+        return;
+
+    def transition_to_state_with_input(self, input_value):
+        # if DFA detect a letter that is not supposed to be in our alphabet,
+        # it will set the current state to None. Otherwise if current state and
+        # input value are in the dictionary move to the next state.
+        temp = self.current_state
+        print('curr_state',temp)
+        next_states = set()
+        # iterate each next state in current states.
+        for i in temp:
+            """
+            for y in range(len(self.states)):
+                if ((y, '@') in self.transition_function.keys()):
+                    next_states = next_states|self.transition_function[(y, '@')]
+            """
+            # if input letter doesn't exist set it None and break.
+            if ((i, input_value) not in self.transition_function.keys()):
+                i = None;
+            next_states = next_states|self.transition_function[(i, input_value)] # intersection
+            print(i,input_value,"->",next_states)
+        if len(next_states) == 0 : # if set is empty it means that the letter
+            #which has been inserted isn't on the alphabet.
+            print("False")
+            exit()
+        else:
+            self.current_state = next_states
+
+
+    def in_accept_state(self):
+        # if current_state(last letter) is in accpet states then return True otherwise false.
+        for i in self.current_state:
+            if (i in accept_states):
+                return True;
+        return False;
+
+
+    def go_to_initial_state(self):
+        # set the initial state.
+        self.current_state = self.start_state;
+        return;
+
+    def run_with_input_list(self, input_list):
+        self.go_to_initial_state();
+        for inp in input_list: # for each letter go to the next state.
+            self.transition_to_state_with_input(inp);
+        return self.in_accept_state();
+
+
 class NFA:
     current_state = None;
     def __init__(self, states, transition_function, start_state, accept_states):
@@ -29,8 +86,8 @@ class NFA:
                 i = None;
             next_states = next_states|self.transition_function[(i, input_value)] # intersection
             print(i,input_value,"->",next_states)
-        if len(next_states) == 0 : # if set is empty it means that the letter which
-                                    # was used isn't on alphabet.
+        if len(next_states) == 0 : # if set is empty it means that the letter
+            #which has been inserted isn't on the alphabet.
             print("False")
             exit()
         else:
@@ -135,6 +192,6 @@ if __name__ == "__main__":
     fname = sys.argv[1] # waiting for the user to give the name.
     falgorithm = sys.argv[2] # tell what kind of problem is. (DFA,NFA,NFA-e)
     states, initial,accept_states,transitions = readFile(fname,falgorithm)
-    d = NFA(states,transitions,initial,accept_states)
-    inp_program = list('ababaab');
+    d = NFAe(states,transitions,initial,accept_states)
+    inp_program = list('11');
     print(d.run_with_input_list(inp_program));

@@ -1,0 +1,13 @@
+states 3
+initial 1
+final 1
+f_states 3
+transitions 8
+1 1 1
+1 0 2
+1 0 3
+1 @ 2
+2 1 2
+2 @ 3
+3 0 3
+3 1 3
