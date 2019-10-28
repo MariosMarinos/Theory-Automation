@@ -21,22 +21,29 @@ class NFA:
         # input value are in the dictionary move to the next state.
         temp = self.current_state
         print('curr_state',temp)
-        x = set()
+        next_states = set()
+        # iterate each next state in current states.
         for i in temp:
-            """if ((i, input_value) not in self.transition_function.keys()):
+            # if input letter doesn't exist set it None and break.
+            if ((i, input_value) not in self.transition_function.keys()):
                 i = None;
-                return;
-            """
-            x = x|self.transition_function[(i, input_value)] # intersection
-            print(i,input_value,"->",x)
-        self.current_state = x
+            next_states = next_states|self.transition_function[(i, input_value)] # intersection
+            print(i,input_value,"->",next_states)
+        if len(next_states) == 0 : # if set is empty it means that the letter which
+                                    # was used isn't on alphabet.
+            print("False")
+            exit()
+        else:
+            self.current_state = next_states
+
 
     def in_accept_state(self):
         # if current_state(last letter) is in accpet states then return True otherwise false.
         for i in self.current_state:
             if (i in accept_states):
                 return True;
-    
+        return False;
+
 
     def go_to_initial_state(self):
         # set the initial state.
@@ -48,7 +55,6 @@ class NFA:
         for inp in input_list: # for each letter go to the next state.
             self.transition_to_state_with_input(inp);
         return self.in_accept_state();
-    pass;
 
 class DFA:
     current_state = None;
@@ -130,5 +136,5 @@ if __name__ == "__main__":
     falgorithm = sys.argv[2] # tell what kind of problem is. (DFA,NFA,NFA-e)
     states, initial,accept_states,transitions = readFile(fname,falgorithm)
     d = NFA(states,transitions,initial,accept_states)
-    inp_program = list('0101');
-    print (d.run_with_input_list(inp_program));
+    inp_program = list('ababaab');
+    print(d.run_with_input_list(inp_program));
