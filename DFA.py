@@ -23,20 +23,28 @@ class NFAe:
         print('curr_state',temp)
         next_states = set()
         # iterate each next state in current states.
-        for i in temp:
-            """
+        for state in temp:
+            e_closure_states = set()
+            e_trans = state
+            e_closure_states.add(e_trans) # takes the initial state + all the e-transition states.
+            # find all next states with e transition.
             for y in range(len(self.states)):
-                if ((y, '@') in self.transition_function.keys()):
-                    next_states = next_states|self.transition_function[(y, '@')]
-            """
-            # if input letter doesn't exist set it None and break.
-            if ((i, input_value) not in self.transition_function.keys()):
-                i = None;
-            next_states = next_states|self.transition_function[(i, input_value)] # intersection
-            print(i,input_value,"->",next_states)
+                if ((y, '@') in self.transition_function.keys() and e_trans == y):
+                    e_closure_states = e_closure_states|self.transition_function[(y, '@')]
+                    e_trans = e_trans + 1
+            print("e-transitions",e_closure_states)
+            # if input letter doesn't exist set it None.
+            if ((state, input_value) not in self.transition_function.keys()):
+                state = None;
+            for state in e_closure_states:
+                next_states = next_states|self.transition_function[(state, input_value)]# intersection
+            print(len(next_states))
         if len(next_states) == 0 : # if set is empty it means that the letter
             #which has been inserted isn't on the alphabet.
-            print("False")
+            if (input_value == ' '):
+                self.current_state = e_closure_states
+                return
+            print("False. Your letter is not on alphabet.")
             exit()
         else:
             self.current_state = next_states
@@ -193,5 +201,5 @@ if __name__ == "__main__":
     falgorithm = sys.argv[2] # tell what kind of problem is. (DFA,NFA,NFA-e)
     states, initial,accept_states,transitions = readFile(fname,falgorithm)
     d = NFAe(states,transitions,initial,accept_states)
-    inp_program = list('11');
+    inp_program = list('aaaaaa');
     print(d.run_with_input_list(inp_program));
