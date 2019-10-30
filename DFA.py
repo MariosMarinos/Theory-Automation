@@ -28,17 +28,19 @@ class NFAe:
             e_trans = state
             e_closure_states.add(e_trans) # takes the initial state + all the e-transition states.
             # find all next states with e transition.
-            for y in range(len(self.states)):
+            # THELEI ALLAGI GIA VELTISTIOPOIISI SE XRONO.
+            for y in range(state,len(self.states)+ 1):
                 if ((y, '@') in self.transition_function.keys() and e_trans == y):
                     e_closure_states = e_closure_states|self.transition_function[(y, '@')]
                     e_trans = e_trans + 1
+                else :
+                    break
             print("e-transitions",e_closure_states)
             # if input letter doesn't exist set it None.
             if ((state, input_value) not in self.transition_function.keys()):
                 state = None;
             for state in e_closure_states:
                 next_states = next_states|self.transition_function[(state, input_value)]# intersection
-            print(len(next_states))
         if len(next_states) == 0 : # if set is empty it means that the letter
             #which has been inserted isn't on the alphabet.
             if (input_value == ' '):
