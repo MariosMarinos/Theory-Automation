@@ -22,11 +22,10 @@ class NFAe:
         # if DFA detect a letter that is not supposed to be in our alphabet,
         # it will set the current state to None. Otherwise if current state and
         # input value are in the dictionary move to the next state.
-        temp = self.current_state
-        print('curr_state',temp)
+        #print('curr_state',self.current_state)
         next_states = set()
         # iterate each next state in current states.
-        for state in temp:
+        for state in self.current_state:
             e_closure_statesFinal = set()
             # takes the initial state + all the e-transition states.
             # tommorow.
@@ -39,24 +38,29 @@ class NFAe:
                 if (len(elems) == 0):
                     break
                 last_set = e_closure_statesFinal.copy()
-                print('elems', elems)
+                #print('elems', elems)
                 for nextstate in elems:
                     for y in range(1):
                         if ((nextstate, '@') in self.transition_function.keys()):
                             e_closure_statesFinal  = e_closure_statesFinal |self.transition_function[(nextstate, '@')]
                         else :
                             break
-                print('final',e_closure_statesFinal)
+                #print('final',e_closure_statesFinal)
 
             for state in e_closure_statesFinal:
                 next_states = next_states|self.transition_function[(state, input_value)]# intersection
-            print('next_states', next_states)
+            #print('next_states', next_states)
+            # if the input is the empty word and it is acceptable by any of e-transitions
+            # or the initial state accept it.
             if (input_value == ' '):
                 self.current_state = e_closure_statesFinal
                 return
+            # if there are no other next_states break. It means that there are no
+            # transitions with the letter that was inputed.
             if (len(next_states) == 0):
                 print('There are no current states to keep going. False')
                 exit()
+            # set the current_state the next states.
             self.current_state = next_states
 
 
@@ -228,5 +232,5 @@ if __name__ == "__main__":
     falgorithm = sys.argv[2] # tell what kind of problem is. (DFA,NFA,NFA-e)
     states, initial,accept_states,transitions,transitions_num = readFile(fname,falgorithm)
     d = NFAe(states,transitions,initial,accept_states,transitions_num)
-    inp_program = list(' ');
+    inp_program = list('910');
     print(d.run_with_input_list(inp_program));
