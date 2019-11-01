@@ -54,7 +54,9 @@ class NFAe:
             if (input_value == ' '):
                 self.current_state = e_closure_statesFinal
                 return
-            # if the input value doesn't exit it will throw an error.
+            if (len(next_states) == 0):
+                print('There are no current states to keep going. False')
+                exit()
             self.current_state = next_states
 
 
@@ -226,5 +228,5 @@ if __name__ == "__main__":
     falgorithm = sys.argv[2] # tell what kind of problem is. (DFA,NFA,NFA-e)
     states, initial,accept_states,transitions,transitions_num = readFile(fname,falgorithm)
     d = NFAe(states,transitions,initial,accept_states,transitions_num)
-    inp_program = list('1');
+    inp_program = list(' ');
     print(d.run_with_input_list(inp_program));
