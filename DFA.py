@@ -4,6 +4,7 @@
 """
 import sys
 from collections import defaultdict
+import time
 
 class NFAe:
     current_state = None;
@@ -20,46 +21,38 @@ class NFAe:
         # it will set the current state to None. Otherwise if current state and
         # input value are in the dictionary move to the next state.
         temp = self.current_state
-        print('curr_state',temp)
+        #print('curr_state',temp)
         next_states = set()
         # iterate each next state in current states.
         for state in temp:
-            e_closure_statesFirst = set()
             e_closure_statesFinal = set()
             # takes the initial state + all the e-transition states.
             # find all next states with e transitions from the current state only ..
             # to the next ones. for example only state to 2,3 etc.
-            for y in range(state,len(self.states)+ 1):
-                if ((y, '@') in self.transition_function.keys() and y == state):
-                    e_closure_statesFirst = e_closure_statesFirst|self.transition_function[(y, '@')]
-                else :
-                    break
-            e_closure_statesFinal = e_closure_statesFirst
-            # find all states from the next_states e.g. 2,3 from up to 2->4 , 3->5 etc..
-            i = 0
-            while i < len(e_closure_statesFinal):
-                for nextstate in e_closure_statesFinal:
-                    #print(nextstate)
-                    for y in range(state,len(self.states)+ 1):
+            e_closure_statesFinal.add(state)
+            last_set = set()
+            elems = e_closure_statesFinal - last_set
+            while (len(elems) != 0):
+                elems = e_closure_statesFinal - last_set
+                last_set = e_closure_statesFinal.copy()
+                #print('elems', elems)
+                for nextstate in elems:
+                    for y in range(1):
                         if ((nextstate, '@') in self.transition_function.keys()):
                             e_closure_statesFinal  = e_closure_statesFinal |self.transition_function[(nextstate, '@')]
                         else :
                             break
-                i += 1
+                    #print('final',e_closure_statesFinal)
 
-            e_closure_statesFinal.add(state)
-
-            print("e-transitions",e_closure_statesFinal)
-            # if input letter doesn't exist set it None.
-            if ((state, input_value) not in self.transition_function.keys()):
-                state = None;
             for state in e_closure_statesFinal:
                 next_states = next_states|self.transition_function[(state, input_value)]# intersection
+            #print('next_states', next_states)
         if len(next_states) == 0 : # if set is empty it means that the letter
             #which has been inserted isn't on the alphabet.
             if (input_value == ' '):
                 self.current_state = e_closure_statesFinal
                 return
+            # if the input value doesn't exit it will throw an error.
             print("False. Your letter is not on alphabet.")
             exit()
         else:
@@ -217,5 +210,5 @@ if __name__ == "__main__":
     falgorithm = sys.argv[2] # tell what kind of problem is. (DFA,NFA,NFA-e)
     states, initial,accept_states,transitions = readFile(fname,falgorithm)
     d = NFAe(states,transitions,initial,accept_states)
-    inp_program = list('aaaa');
+    inp_program = list('aaaaaa');
     print(d.run_with_input_list(inp_program));
