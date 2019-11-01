@@ -8,12 +8,14 @@ import time
 
 class NFAe:
     current_state = None;
-    def __init__(self, states, transition_function, start_state, accept_states):
+    def __init__(self, states, transition_function, start_state, accept_states,transitions):
         self.states = states;
         self.transition_function = transition_function;
         self.start_state = start_state;
         self.accept_states = accept_states;
         self.current_state = start_state;
+        self.transitions = transitions;
+        self.alphabet = set();
         return;
 
     def transition_to_state_with_input(self, input_value):
@@ -21,48 +23,45 @@ class NFAe:
         # it will set the current state to None. Otherwise if current state and
         # input value are in the dictionary move to the next state.
         temp = self.current_state
-        #print('curr_state',temp)
+        print('curr_state',temp)
         next_states = set()
         # iterate each next state in current states.
         for state in temp:
             e_closure_statesFinal = set()
             # takes the initial state + all the e-transition states.
-            # find all next states with e transitions from the current state only ..
-            # to the next ones. for example only state to 2,3 etc.
+            # tommorow.
             e_closure_statesFinal.add(state)
             last_set = set()
             elems = e_closure_statesFinal - last_set
             while (len(elems) != 0):
                 elems = e_closure_statesFinal - last_set
+                # break if no more elements to test.
+                if (len(elems) == 0):
+                    break
                 last_set = e_closure_statesFinal.copy()
-                #print('elems', elems)
+                print('elems', elems)
                 for nextstate in elems:
                     for y in range(1):
                         if ((nextstate, '@') in self.transition_function.keys()):
                             e_closure_statesFinal  = e_closure_statesFinal |self.transition_function[(nextstate, '@')]
                         else :
                             break
-                    #print('final',e_closure_statesFinal)
+                print('final',e_closure_statesFinal)
 
             for state in e_closure_statesFinal:
                 next_states = next_states|self.transition_function[(state, input_value)]# intersection
-            #print('next_states', next_states)
-        if len(next_states) == 0 : # if set is empty it means that the letter
-            #which has been inserted isn't on the alphabet.
+            print('next_states', next_states)
             if (input_value == ' '):
                 self.current_state = e_closure_statesFinal
                 return
             # if the input value doesn't exit it will throw an error.
-            print("False. Your letter is not on alphabet.")
-            exit()
-        else:
             self.current_state = next_states
 
 
     def in_accept_state(self):
         # if current_state(last letter) is in accpet states then return True otherwise false.
         for i in self.current_state:
-            if (i in accept_states):
+            if (i in self.accept_states):
                 return True;
         return False;
 
@@ -72,9 +71,26 @@ class NFAe:
         self.current_state = self.start_state;
         return;
 
+    def calc_alphabet(self):
+        #alphabet = set()
+        temp = self.transition_function.keys()
+        # for each key value export the second number which is the letter
+        # to make up the alphabet.
+        # add the empty word on alphabet.
+        self.alphabet.add(' ')
+        for y in temp:
+            if (y[1] not in self.alphabet):
+                self.alphabet.add(y[1])
+            #self.transition_function[()]
+
     def run_with_input_list(self, input_list):
         self.go_to_initial_state();
+        self.calc_alphabet();
         for inp in input_list: # for each letter go to the next state.
+        # if the inp isn't on alphabet exit the program.
+            if (inp not in self.alphabet):
+                print("The letter (",inp,") doesn't exist on your alphabet.")
+                exit()
             self.transition_to_state_with_input(inp);
         return self.in_accept_state();
 
@@ -189,7 +205,7 @@ def readFile(fname, falgorithm):
             elif (split[0].startswith('final')):
                 final = int(split[1])
             elif (split[0].startswith('f_states')):
-                for i in range(1,final+1):
+                for i in range(1,len(split)):
                     final_list.add(int(split[i]))
             elif (split[0].startswith('transitions')):
                 transitions = int(split[1])
@@ -201,14 +217,14 @@ def readFile(fname, falgorithm):
 
     print ([ (k,v) for k,v in transitions_dictionary.items()])
 
-    return states, initial, final_list, transitions_dictionary
+    return states, initial, final_list, transitions_dictionary, transitions
 
 
 
 if __name__ == "__main__":
     fname = sys.argv[1] # waiting for the user to give the name.
     falgorithm = sys.argv[2] # tell what kind of problem is. (DFA,NFA,NFA-e)
-    states, initial,accept_states,transitions = readFile(fname,falgorithm)
-    d = NFAe(states,transitions,initial,accept_states)
-    inp_program = list('aaaaaa');
+    states, initial,accept_states,transitions,transitions_num = readFile(fname,falgorithm)
+    d = NFAe(states,transitions,initial,accept_states,transitions_num)
+    inp_program = list('1');
     print(d.run_with_input_list(inp_program));
