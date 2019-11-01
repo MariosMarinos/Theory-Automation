@@ -23,42 +23,41 @@ class NFAe:
         # if DFA detect a letter that is not supposed to be in our alphabet,
         # it will set the current state to None. Otherwise if current state and
         # input value are in the dictionary move to the next state.
-        # print('curr_state',self.current_state)
+        # print('curr_state', self.current_state)
         next_states = set()
         # iterate each next state in current states.
         for state in self.current_state:
-            e_closure_statesFinal = set()
+            e_closure_states = set()
             # takes the initial state + all the e-transition states.
-            # tommorow.
-            e_closure_statesFinal.add(state)
+            e_closure_states.add(state)
             last_set = set()
-            elems = e_closure_statesFinal - last_set
-            while (len(elems) != 0):
-                elems = e_closure_statesFinal - last_set
+            elems = e_closure_states - last_set
+            while len(elems) != 0:
+                elems = e_closure_states - last_set
                 # break if there are no additional elements to test.
-                if (len(elems) == 0):
+                if len(elems) == 0:
                     break
-                last_set = e_closure_statesFinal.copy()
+                last_set = e_closure_states.copy()
                 # print('elems', elems)
                 for nextstate in elems:
                     for y in range(1):
-                        if ((nextstate, '@') in self.transition_function.keys()):
-                            e_closure_statesFinal = e_closure_statesFinal | self.transition_function[(nextstate, '@')]
+                        if (nextstate, '@') in self.transition_function.keys():
+                             e_closure_states = e_closure_states | self.transition_function[(nextstate, '@')]
                         else:
                             break
-                # print('final',e_closure_statesFinal)
+                # print('final', e_closure_states)
 
-            for state in e_closure_statesFinal:
+            for state in e_closure_states:
                 next_states = next_states | self.transition_function[(state, input_value)]  # intersection
             # print('next_states', next_states)
             # if the input is the empty word and it is acceptable by any of e-transitions
             # or the initial state accept it.
-            if (input_value == ' '):
-                self.current_state = e_closure_statesFinal
+            if input_value == ' ':
+                self.current_state = e_closure_states
                 return
             # if there are no other next_states break. It means that there are no
-            # transitions with the letter that was inputed.
-            if (len(next_states) == 0):
+            # transitions with the letter that was input.
+            if len(next_states) == 0:
                 print('There are no current states to keep going. False')
                 exit()
             # set the current_state the next states.
@@ -67,7 +66,7 @@ class NFAe:
     def in_accept_state(self):
         # if current_state(last letter) is in accpet states then return True otherwise false.
         for i in self.current_state:
-            if (i in self.accept_states):
+            if i in self.accept_states:
                 return True
         return False
 
@@ -83,7 +82,7 @@ class NFAe:
         # add the empty word on alphabet.
         self.alphabet.add(' ')
         for y in temp:
-            if (y[1] not in self.alphabet):
+            if y[1] not in self.alphabet:
                 self.alphabet.add(y[1])
 
     def run_with_input_list(self, input_list):
@@ -91,7 +90,7 @@ class NFAe:
         self.calc_alphabet()
         for inp in input_list:  # for each letter go to the next state.
             # if the inp isn't on alphabet exit the program.
-            if (inp not in self.alphabet):
+            if inp not in self.alphabet:
                 print("The letter(", inp, ")doesn't exist on your alphabet.")
                 exit()
             self.transition_to_state_with_input(inp)
@@ -117,7 +116,7 @@ class NFA:
         # iterate each next state in current states.
         for i in self.current_state:
             # if input letter doesn't exist set it None and break.
-            if ((i, input_value) not in self.transition_function.keys()):
+            if (i, input_value) not in self.transition_function.keys():
                 i = None
             next_states = next_states | self.transition_function[(i, input_value)]  # intersection
         if len(next_states) == 0:  # if set is empty it means that the letter
@@ -130,7 +129,7 @@ class NFA:
     def in_accept_state(self):
         # if current_state(last letter) is in accpet states then return True otherwise false.
         for i in self.current_state:
-            if (i in accept_states):
+            if i in accept_states:
                 return True
         return False
 
@@ -161,7 +160,7 @@ class DFA:
         # if DFA detect a letter that is not supposed to be in our alphabet,
         # it will set the current state to None. Otherwise if current state and
         # input value are in the dictionary move to the next state.
-        if ((self.current_state, input_value) not in self.transition_function.keys()):
+        if (self.current_state, input_value) not in self.transition_function.keys():
             self.current_state = None
             return
         self.current_state = self.transition_function[(self.current_state, input_value)]
@@ -185,32 +184,32 @@ class DFA:
 
 def readFile(fname, falgorithm):
     with open(fname) as f:
-        if (falgorithm == 'DFA'):
+        if falgorithm == 'DFA':
             transitions_dictionary = dict()
-        elif (falgorithm == 'NFA'):
+        elif falgorithm == 'NFA':
             transitions_dictionary = defaultdict(set)  # transitions
         states = set()  # all states
         final_list = set()  # final_states in list.
         for line in f:
             split = line.split(' ')
-            if (split[0].startswith('states')):
+            if split[0].startswith('states'):
                 for i in range(int(split[1])):
-                    states.add(i+1)
-            elif (split[0].startswith('initial')):
+                    states.add(i + 1)
+            elif split[0].startswith('initial'):
                 initial = int(split[1])
-                if (falgorithm == 'NFA'):
+                if falgorithm == 'NFA':
                     temp = set()
                     temp.add(initial)
                     initial = temp
-            elif (split[0].startswith('final')):
+            elif split[0].startswith('final'):
                 continue
-            elif (split[0].startswith('f_states')):
+            elif split[0].startswith('f_states'):
                 for i in range(1, len(split)):
                     final_list.add(int(split[i]))
-            elif (split[0].startswith('transitions')):
+            elif split[0].startswith('transitions'):
                 transitions = int(split[1])
             else:
-                if (falgorithm == 'DFA'):
+                if falgorithm == 'DFA':
                     transitions_dictionary[(int(split[0]), split[1])] = int(split[2])
                 else:
                     transitions_dictionary[(int(split[0]), split[1])].add(int(split[2]))
@@ -226,5 +225,5 @@ if __name__ == "__main__":
     print(fname, falgorithm)
     states, initial, accept_states, transitions, transitions_num = readFile(fname, falgorithm)
     d = NFAe(states, transitions, initial, accept_states, transitions_num)
-    inp_program = list('910')
+    inp_program = list('aaaaaaa')
     print(d.run_with_input_list(inp_program))
