@@ -23,9 +23,11 @@ class NFAe:
         # if DFA detect a letter that is not supposed to be in our alphabet,
         # it will set the current state to None. Otherwise if current state and
         # input value are in the dictionary move to the next state.
-        # print('curr_state', self.current_state)
         next_states = set()
         # iterate each next state in current states.
+        """ The for loop does evaluate the moves that can be done from the current_states with e-transitions and 
+        it puts it into a e_closure_states set. We use set difference in order not to loop all 
+        states in the e_closure_sets again as we already have checked some of them. While there is no"""
         for state in self.current_state:
             e_closure_states, last_used_set = set(), set()
             # takes the initial state + all the e-transition states.
@@ -33,7 +35,6 @@ class NFAe:
             set_difference = e_closure_states - last_used_set
             # as long as the list has elements do that.
             while bool(set_difference):
-
                 set_difference = e_closure_states - last_used_set
                 # break if there are no additional elements to test (if not bool(set_difference):).
                 if not bool(set_difference):
@@ -49,9 +50,6 @@ class NFAe:
             # or the initial state accept it.
             # if true return e_closure_states if not next_states.
             self.current_state = e_closure_states if input_value == ' ' else next_states
-
-    def geteclosure(self):
-        pass
 
     def in_accept_state(self):
         # if current_state(last letter) is in accpet states then return True otherwise false.
