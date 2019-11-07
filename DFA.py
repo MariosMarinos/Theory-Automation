@@ -27,41 +27,31 @@ class NFAe:
         next_states = set()
         # iterate each next state in current states.
         for state in self.current_state:
-            e_closure_states = set()
+            e_closure_states, last_used_set = set(), set()
             # takes the initial state + all the e-transition states.
             e_closure_states.add(state)
-            last_set = set()
-            elems = e_closure_states - last_set
-            while len(elems) != 0:
-                elems = e_closure_states - last_set
-                # break if there are no additional elements to test.
-                if len(elems) == 0:
-                    break
-                last_set = e_closure_states.copy()
-                # print('elems', elems)
-                for nextstate in elems:
-                    for y in range(1):
-                        if (nextstate, '@') in self.transition_function.keys():
-                             e_closure_states = e_closure_states | self.transition_function[(nextstate, '@')]
-                        else:
-                            break
-                # print('final', e_closure_states)
+            set_difference = e_closure_states - last_used_set
+            # as long as the list has elements do that.
+            while bool(set_difference):
 
-            for state in e_closure_states:
-                next_states = next_states | self.transition_function[(state, input_value)]  # intersection
-            # print('next_states', next_states)
+                set_difference = e_closure_states - last_used_set
+                # break if there are no additional elements to test (if not bool(set_difference):).
+                if not bool(set_difference):
+                    break
+                last_used_set = e_closure_states.copy()
+                for nextstate in set_difference:
+                    if (nextstate, '@') in self.transition_function.keys():
+                        e_closure_states = e_closure_states | self.transition_function[(nextstate, '@')]
+            next_states = set.union(next_states,
+            *(self.transition_function[(state, input_value)]
+            for state in e_closure_states))  # intersection
             # if the input is the empty word and it is acceptable by any of e-transitions
             # or the initial state accept it.
-            if input_value == ' ':
-                self.current_state = e_closure_states
-                return
-            # if there are no other next_states break. It means that there are no
-            # transitions with the letter that was input.
-            if len(next_states) == 0:
-                print('There are no current states to keep going. False')
-                exit()
-            # set the current_state the next states.
-            self.current_state = next_states
+            # if true return e_closure_states if not next_states.
+            self.current_state = e_closure_states if input_value == ' ' else next_states
+
+    def geteclosure(self):
+        pass
 
     def in_accept_state(self):
         # if current_state(last letter) is in accpet states then return True otherwise false.
@@ -76,12 +66,11 @@ class NFAe:
         return
 
     def calc_alphabet(self):
-        temp = self.transition_function.keys()
         # for each key value export the second number which is the letter
         # to make up the alphabet.
         # add the empty word on alphabet.
         self.alphabet.add(' ')
-        for y in temp:
+        for y in self.transition_function.keys():
             if y[1] not in self.alphabet:
                 self.alphabet.add(y[1])
 
@@ -225,5 +214,5 @@ if __name__ == "__main__":
     print(fname, falgorithm)
     states, initial, accept_states, transitions, transitions_num = readFile(fname, falgorithm)
     d = NFAe(states, transitions, initial, accept_states, transitions_num)
-    inp_program = list('aaaaaaa')
+    inp_program = list('aaaa')
     print(d.run_with_input_list(inp_program))
