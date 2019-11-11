@@ -21,7 +21,6 @@ class NFAe:
 
     def transition_to_state_with_input(self, input_value):
         next_states = set()
-        # iterate each next state in current states.
         """ The for loop does evaluate the moves that can be done from the current_states with e-transitions and
         it puts it into a e_closure_states set. We use set difference in order not to loop all
         states in the e_closure_sets again as we already have checked some of them. While there is no"""
