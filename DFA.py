@@ -25,8 +25,8 @@ class NFAe:
         # input value are in the dictionary move to the next state.
         next_states = set()
         # iterate each next state in current states.
-        """ The for loop does evaluate the moves that can be done from the current_states with e-transitions and 
-        it puts it into a e_closure_states set. We use set difference in order not to loop all 
+        """ The for loop does evaluate the moves that can be done from the current_states with e-transitions and
+        it puts it into a e_closure_states set. We use set difference in order not to loop all
         states in the e_closure_sets again as we already have checked some of them. While there is no"""
         for state in self.current_state:
             e_closure_states, last_used_set = set(), set()
@@ -44,8 +44,8 @@ class NFAe:
                     if (nextstate, '@') in self.transition_function.keys():
                         e_closure_states = e_closure_states | self.transition_function[(nextstate, '@')]
             next_states = set.union(next_states,
-            *(self.transition_function[(state, input_value)]
-            for state in e_closure_states))  # intersection
+                                    *(self.transition_function[(state, input_value)]
+                                      for state in e_closure_states))  # intersection
             # if the input is the empty word and it is acceptable by any of e-transitions
             # or the initial state accept it.
             # if true return e_closure_states if not next_states.
@@ -75,7 +75,11 @@ class NFAe:
     def run_with_input_list(self, input_list):
         self.go_to_initial_state()
         self.calc_alphabet()
-        for inp in input_list:  # for each letter go to the next state.
+        # append a space in the input_word in order to determine the words that
+        # has a e_transitions to final node.
+        input_list.append(' ')
+        for inp in input_list:
+            # for each letter go to the next state.
             # if the inp isn't on alphabet exit the program.
             if inp not in self.alphabet:
                 print("The letter(", inp, ")doesn't exist on your alphabet.")
@@ -212,5 +216,5 @@ if __name__ == "__main__":
     print(fname, falgorithm)
     states, initial, accept_states, transitions, transitions_num = readFile(fname, falgorithm)
     d = NFAe(states, transitions, initial, accept_states, transitions_num)
-    inp_program = list('aaaa')
+    inp_program = list('0')
     print(d.run_with_input_list(inp_program))
