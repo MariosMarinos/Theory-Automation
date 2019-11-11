@@ -20,9 +20,6 @@ class NFAe:
         return
 
     def transition_to_state_with_input(self, input_value):
-        # if DFA detect a letter that is not supposed to be in our alphabet,
-        # it will set the current state to None. Otherwise if current state and
-        # input value are in the dictionary move to the next state.
         next_states = set()
         # iterate each next state in current states.
         """ The for loop does evaluate the moves that can be done from the current_states with e-transitions and
