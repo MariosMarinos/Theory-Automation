@@ -39,9 +39,11 @@ class NFAe:
                 for nextstate in set_difference:
                     if (nextstate, '@') in self.transition_function.keys():
                         e_closure_states = e_closure_states | self.transition_function[(nextstate, '@')]
-            next_states = set.union(next_states,
-                                    *(self.transition_function[(state, input_value)]
-                                      for state in e_closure_states))  # intersection
+            for state in e_closure_states:
+                next_states = next_states | self.transition_function[(state, input_value)]
+            # next_states = set.union(next_states,
+            #                         *(self.transition_function[(state, input_value)]
+            #                           for state in e_closure_states))  # intersection
             # if the input is the empty word and it is acceptable by any of e-transitions
             # or the initial state accept it.
             # if true return e_closure_states if not next_states.
