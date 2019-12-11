@@ -23,7 +23,7 @@ class NFAe:
         next_states = set()
         """ The for loop does evaluate the moves that can be done from the current_states with e-transitions and
         it puts it into a e_closure_states set. We use set difference in order not to loop all
-        states in the e_closure_sets again as we already have checked some of them. While there is no"""
+        states in the e_closure_sets again as we already have checked some of them."""
         for state in self.current_state:
             e_closure_states, last_used_set = set(), set()
             # takes the initial state + all the e-transition states.
